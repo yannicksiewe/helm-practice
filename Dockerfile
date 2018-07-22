@@ -1,4 +1,4 @@
-FROM centos:7
+FROM gwerlas/centos7-docker
 
 MAINTAINER SYI <ysi@adorsys.de>
 
