@@ -5,14 +5,13 @@ MAINTAINER SYI <ysi@adorsys.de>
 ## Install docker client
 RUN yum install -y docker-client \
 ## Install oc client
-    && curl -LsSf -O https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz  \
-    && tar zxvf openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz  \
-    && mv openshift-origin-client-tools-v3.9.0-191fece-linux-64bit/oc /usr/local/bin/  \
-    && rm -rf openshift-origin-client-tools-v3.9.0-191fece-linux-64bit*  \
+    && curl -LsSf -O https://github.com/openshift/origin/releases/download/v3.10.0/openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz \
+    && tar zxvf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz  \
+    && mv openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit/oc /usr/local/bin/  \
+    && rm -rf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit*  \
 ## Install ansible and java 8
     && yum install -y epel-release \
-    && yum install -y openssh-clients git ansible python-six python-passlib python-lxml pyOpenSSL python-cryptography  \
-        patch httpd-tools java-1.8.0-openjdk-headless python-boto python-boto3  \
+    && yum install -y openssh-clients git ansible \
     && rm -rf /var/cache/yum  \
 ## Install kubernetes helm
     && curl -LsSf -O https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz  \
