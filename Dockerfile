@@ -2,22 +2,22 @@ FROM centos:7
 
 MAINTAINER SYI <ysi@adorsys.de>
 
-## Install docker client
-RUN yum install -y docker-client \
-## Install oc client
-    && curl -LsSf -O https://github.com/openshift/origin/releases/download/v3.10.0/openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz \
-    && tar zxvf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit.tar.gz  \
-    && mv openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit/oc /usr/local/bin/  \
-    && rm -rf openshift-origin-client-tools-v3.10.0-dd10d17-linux-64bit*  \
-## Install ansible and java 8
-    && yum install -y epel-release \
-    && yum install -y openssh-clients git ansible \
-    && rm -rf /var/cache/yum  \
-## Install kubernetes helm
-    && curl -LsSf -O https://storage.googleapis.com/kubernetes-helm/helm-v2.9.1-linux-amd64.tar.gz  \
-    && tar -zxvf helm-v2.9.1-linux-amd64.tar.gz \
-    && mv linux-amd64/helm /usr/local/bin/helm \
-    && rm -rf helm-v2.9.1-linux-amd64.tar.gz linux-amd64 \
-    && yum clean all -y
+ARG COPY_IMAGE_VERSION=v2.0.0-rc.1
+ARG HELM_VERSION=v2.10.0
+ARG HELM_DIFF_VERSION=v2.9.0+2
 
-ENTRYPOINT ["/usr/bin/ansible-playbook"]
+RUN yum install -y epel-release centos-release-openshift-origin \
+    && yum install -y git docker-client ansible origin-clients \
+    && yum clean all \
+    && rm -rf /var/cache/yum \
+## Install kubernetes helm
+    && curl -LsSf -O https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz \
+    && tar -zxvf helm-${HELM_VERSION}-linux-amd64.tar.gz \
+    && mv linux-amd64/helm /usr/local/bin/helm \
+    && rm -rf helm-${HELM_VERSION}-linux-amd64.tar.gz linux-amd64 \
+## Install helm diff plugin
+    && helm init --client-only \
+    && helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_VERSION} \
+## Install copy-docker-image
+    && curl -LsSf -o /usr/local/bin/copy-docker-image "https://github.com/jkroepke/copy-docker-image/releases/download/${COPY_IMAGE_VERSION}/copy-docker-image_linux_amd64" \
+    && chmod +x /usr/local/bin/copy-docker-image
