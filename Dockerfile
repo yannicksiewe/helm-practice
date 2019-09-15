@@ -1,8 +1,4 @@
 ### For full image version refere to https://github.com/adorsys/dockerhub-pipeline-images/tree/master/ci-helm/2.14
-FROM registry.access.redhat.com/ubi8/ubi AS TIMEZONE
-
-FROM openshift/origin-cli:v3.11 AS OC_CLIENT
-
 FROM golang:1.12 as SKOPEO
 
 ARG SKOPEO_VERSION=v0.1.35
@@ -36,12 +32,12 @@ ARG HELM_TILLER_VERSION=0.8.3
 
 #COPY root /
 
-COPY --from=OC_CLIENT /usr/bin/oc /usr/local/bin/oc
+COPY --from=openshift/origin-cli:v3.11 /usr/bin/oc /usr/local/bin/oc
 COPY --from=SKOPEO /go/src/github.com/containers/skopeo/skopeo /usr/local/bin/skopeo
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=1611117
-COPY --from=TIMEZONE /usr/share/zoneinfo/UTC /usr/share/zoneinfo/UTC
-COPY --from=TIMEZONE /usr/share/zoneinfo/Europe/Berlin /usr/share/zoneinfo/Europe/Berlin
+COPY --from=registry.access.redhat.com/ubi8/ubi /usr/share/zoneinfo/UTC /usr/share/zoneinfo/UTC
+COPY --from=registry.access.redhat.com/ubi8/ubi /usr/share/zoneinfo/Europe/Berlin /usr/share/zoneinfo/Europe/Berlin
 
 RUN set -euo pipefail \
     && mkdir -p "${HELM_HOME}" "$(dirname "$KUBECONFIG")" \
